@@ -1,0 +1,41 @@
+# Backend (YII2 / PHP)
+backend/vendor/
+backend/runtime/
+backend/web/assets/
+backend/.env
+backend/composer.lock
+
+# Frontend (SvelteKit / Node)
+frontend/node_modules/
+frontend/.svelte-kit/
+frontend/build/
+frontend/.env
+frontend/.env.local
+frontend/package-lock.json
+
+# Docker
+docker/mysql/data/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# Test coverage
+coverage/
+.nyc_output/
+
+# Temporary files
+tmp/
+temp/
+*.tmp
