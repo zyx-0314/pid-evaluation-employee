@@ -16,7 +16,8 @@ return [
     ],
     'components' => [
         'request' => [
-            'cookieValidationKey' => getenv('COOKIE_VALIDATION_KEY') ?: 'pid-evaluation-secret-key-change-in-production',
+            // Cookie validation key - MUST be set via environment variable in production
+            'cookieValidationKey' => getenv('COOKIE_VALIDATION_KEY') ?: (YII_ENV === 'dev' ? 'dev-key-not-for-production' : ''),
             'parsers' => [
                 'application/json' => 'yii\web\JsonParser',
             ],
