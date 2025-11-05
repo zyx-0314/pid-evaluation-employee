@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/9.5/phpunit.xsd"
+         bootstrap="tests/bootstrap.php"
+         colors="true"
+         verbose="true">
+    <testsuites>
+        <!-- Functional tests: Database connections and integrations -->
+        <testsuite name="functional">
+            <directory>tests/functional</directory>
+        </testsuite>
+        
+        <!-- Unit tests: Individual function testing -->
+        <testsuite name="unit">
+            <directory>tests/unit</directory>
+        </testsuite>
+        
+        <!-- Acceptance tests: E2E scenarios like LILO -->
+        <testsuite name="acceptance">
+            <directory>tests/acceptance</directory>
+        </testsuite>
+    </testsuites>
+    
+    <coverage>
+        <include>
+            <directory suffix=".php">./models</directory>
+            <directory suffix=".php">./controllers</directory>
+            <directory suffix=".php">./components</directory>
+        </include>
+    </coverage>
+</phpunit>
