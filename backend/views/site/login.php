@@ -46,8 +46,8 @@ $this->title = 'Login';
     <div class="mt-6 text-sm text-gray-600">
         <p><strong>Test Credentials:</strong></p>
         <ul class="list-disc list-inside mt-2">
-            <li>Username: admin, Password: password123</li>
-            <li>Username: john.doe, Password: password123</li>
+            <li>Username: admin, Password: password</li>
+            <li>Username: john.doe, Password: password</li>
         </ul>
     </div>
 </div>
