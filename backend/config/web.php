@@ -54,6 +54,8 @@ return [
                 'api/employees/<id:\d+>' => 'api/employee/view',
                 'api/evaluations' => 'api/evaluation/index',
                 'api/evaluations/<id:\d+>' => 'api/evaluation/view',
+                // Admin UI
+                'admin' => 'admin/index',
             ],
         ],
         // AWS S3 service (via LocalStack in development)

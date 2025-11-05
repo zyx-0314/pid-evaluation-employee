@@ -71,6 +71,16 @@ services:
                 condition: service_started
         networks:
             - pid-network
+            # Compose Watch: sync source; rebuild on dependency updates
+        develop:
+            watch:
+                - action: sync
+                  path: ./backend
+                  target: /var/www/html
+                - action: rebuild
+                  path: ./backend/composer.json
+                - action: rebuild
+                  path: ./backend/composer.lock
 
     # SvelteKit Frontend (User Interface)
     frontend:
@@ -90,6 +100,15 @@ services:
             - backend
         networks:
             - pid-network
+        develop:
+            watch:
+                - action: sync
+                  path: ./frontend
+                  target: /app
+                - action: rebuild
+                  path: ./frontend/package.json
+                - action: rebuild
+                  path: ./frontend/package-lock.json
 
 networks:
     pid-network:

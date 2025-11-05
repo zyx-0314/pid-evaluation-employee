@@ -31,6 +31,10 @@ use yii\helpers\Html;
                 <?= Html::a('Login', ['site/login'], ['class' => 'px-4 py-2 bg-blue-700 rounded hover:bg-blue-800']) ?>
             <?php else: ?>
                 <span class="mr-4">Welcome, <?= Html::encode(Yii::$app->user->identity->username) ?></span>
+                <?php // show admin link for admin role users ?>
+                <?php if (isset(Yii::$app->user->identity->role) && Yii::$app->user->identity->role === 'admin'): ?>
+                    <?= Html::a('User Management', ['admin/index'], ['class' => 'px-4 py-2 bg-blue-700 rounded hover:bg-blue-800 mr-2']) ?>
+                <?php endif; ?>
                 <?= Html::a('Logout', ['site/logout'], ['class' => 'px-4 py-2 bg-blue-700 rounded hover:bg-blue-800']) ?>
             <?php endif; ?>
         </div>

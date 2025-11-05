@@ -23,6 +23,11 @@ use yii\web\IdentityInterface;
 class User extends ActiveRecord implements IdentityInterface
 {
     /**
+     * Plain password used for forms. Not stored in DB.
+     * @var string|null
+     */
+    public $password;
+    /**
      * @inheritdoc
      */
     public static function tableName()
@@ -36,7 +41,9 @@ class User extends ActiveRecord implements IdentityInterface
     public function rules()
     {
         return [
-            [['username', 'email', 'password_hash'], 'required'],
+            [['username', 'email'], 'required'],
+            ['password', 'required', 'on' => 'create'],
+            ['password', 'string', 'min' => 6],
             ['email', 'email'],
             ['is_active', 'boolean'],
             ['role', 'in', 'range' => ['admin', 'manager', 'employee']],
@@ -121,6 +128,22 @@ class User extends ActiveRecord implements IdentityInterface
     public function setPassword($password)
     {
         $this->password_hash = Yii::$app->security->generatePasswordHash($password);
+    }
+
+    /**
+     * Ensure password_hash is set from password when saving (if provided)
+     */
+    public function beforeSave($insert)
+    {
+        if (!parent::beforeSave($insert)) {
+            return false;
+        }
+
+        if (!empty($this->password)) {
+            $this->setPassword($this->password);
+        }
+
+        return true;
     }
 
     /**
