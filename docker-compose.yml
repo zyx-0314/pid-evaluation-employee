@@ -35,9 +35,13 @@ services:
             - '4566:4566' # LocalStack main port
             - '4571:4571' # S3 service port
         volumes:
-            - localstack_data:/tmp/localstack
             - ./docker/localstack:/docker-entrypoint-initaws.d
             - /var/run/docker.sock:/var/run/docker.sock
+        healthcheck:
+            test: ['CMD-SHELL', 'curl -f http://localhost:4566/health || exit 1']
+            interval: 5s
+            timeout: 5s
+            retries: 12
         networks:
             - pid-network
 
@@ -93,4 +97,6 @@ networks:
 
 volumes:
     mysql_data:
-    localstack_data:
+    # localstack_data intentionally removed because mounting LocalStack's /tmp path from the
+    # host can cause "Device or resource busy" errors on some platforms (Windows). Let
+    # LocalStack manage its temp data inside the container for local development.
