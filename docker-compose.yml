@@ -1,96 +1,96 @@
-version: '3.8'
+name: test-yii-sveltekit-pid-evaluation
 
 services:
-  # MySQL Database (simulating AWS RDS)
-  mysql:
-    image: mysql:8.0
-    container_name: pid-mysql
-    environment:
-      MYSQL_ROOT_PASSWORD: root_password
-      MYSQL_DATABASE: pid_evaluation
-      MYSQL_USER: pid_user
-      MYSQL_PASSWORD: pid_password
-    ports:
-      - "3306:3306"
-    volumes:
-      - mysql_data:/var/lib/mysql
-      - ./docker/mysql/init:/docker-entrypoint-initdb.d
-    networks:
-      - pid-network
-    healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
-      timeout: 20s
-      retries: 10
+    # MySQL Database (simulating AWS RDS)
+    mysql:
+        image: mysql:8.0
+        container_name: pid-evaluation-mysql
+        environment:
+            MYSQL_ROOT_PASSWORD: root_password
+            MYSQL_DATABASE: pid_evaluation
+            MYSQL_USER: pid_user
+            MYSQL_PASSWORD: pid_password
+        ports:
+            - '3306:3306'
+        volumes:
+            - mysql_data:/var/lib/mysql
+            - ./docker/mysql/init:/docker-entrypoint-initdb.d
+        networks:
+            - pid-network
+        healthcheck:
+            test: ['CMD', 'mysqladmin', 'ping', '-h', 'localhost']
+            timeout: 20s
+            retries: 10
 
-  # LocalStack (simulating AWS S3, API Gateway, etc.)
-  localstack:
-    image: localstack/localstack:latest
-    container_name: pid-localstack
-    environment:
-      - SERVICES=s3,apigateway
-      - DEBUG=1
-      - DATA_DIR=/tmp/localstack/data
-      - DOCKER_HOST=unix:///var/run/docker.sock
-    ports:
-      - "4566:4566"  # LocalStack main port
-      - "4571:4571"  # S3 service port
-    volumes:
-      - localstack_data:/tmp/localstack
-      - ./docker/localstack:/docker-entrypoint-initaws.d
-      - /var/run/docker.sock:/var/run/docker.sock
-    networks:
-      - pid-network
+    # LocalStack (simulating AWS S3, API Gateway, etc.)
+    localstack:
+        image: localstack/localstack:latest
+        container_name: pid-evaluation-localstack
+        environment:
+            - SERVICES=s3,apigateway
+            - DEBUG=1
+            - DATA_DIR=/tmp/localstack/data
+            - DOCKER_HOST=unix:///var/run/docker.sock
+        ports:
+            - '4566:4566' # LocalStack main port
+            - '4571:4571' # S3 service port
+        volumes:
+            - localstack_data:/tmp/localstack
+            - ./docker/localstack:/docker-entrypoint-initaws.d
+            - /var/run/docker.sock:/var/run/docker.sock
+        networks:
+            - pid-network
 
-  # YII2 Backend (Admin Panel)
-  backend:
-    build:
-      context: ./backend
-      dockerfile: Dockerfile
-    container_name: pid-backend
-    environment:
-      - DB_HOST=mysql
-      - DB_NAME=pid_evaluation
-      - DB_USER=pid_user
-      - DB_PASSWORD=pid_password
-      - AWS_ENDPOINT=http://localstack:4566
-      - AWS_ACCESS_KEY_ID=test
-      - AWS_SECRET_ACCESS_KEY=test
-      - AWS_DEFAULT_REGION=us-east-1
-    ports:
-      - "8080:80"
-    volumes:
-      - ./backend:/var/www/html
-    depends_on:
-      mysql:
-        condition: service_healthy
-      localstack:
-        condition: service_started
-    networks:
-      - pid-network
+    # YII2 Backend (Admin Panel)
+    backend:
+        build:
+            context: ./backend
+            dockerfile: Dockerfile
+        container_name: pid-evaluation-backend
+        environment:
+            - DB_HOST=mysql
+            - DB_NAME=pid_evaluation
+            - DB_USER=pid_user
+            - DB_PASSWORD=pid_password
+            - AWS_ENDPOINT=http://localstack:4566
+            - AWS_ACCESS_KEY_ID=test
+            - AWS_SECRET_ACCESS_KEY=test
+            - AWS_DEFAULT_REGION=us-east-1
+        ports:
+            - '8080:80'
+        volumes:
+            - ./backend:/var/www/html
+        depends_on:
+            mysql:
+                condition: service_healthy
+            localstack:
+                condition: service_started
+        networks:
+            - pid-network
 
-  # SvelteKit Frontend (User Interface)
-  frontend:
-    build:
-      context: ./frontend
-      dockerfile: Dockerfile
-    container_name: pid-frontend
-    environment:
-      - API_URL=http://backend
-      - PUBLIC_API_URL=http://localhost:8080
-    ports:
-      - "3000:3000"
-    volumes:
-      - ./frontend:/app
-      - /app/node_modules
-    depends_on:
-      - backend
-    networks:
-      - pid-network
+    # SvelteKit Frontend (User Interface)
+    frontend:
+        build:
+            context: ./frontend
+            dockerfile: Dockerfile
+        container_name: pid-evaluation-frontend
+        environment:
+            - API_URL=http://backend
+            - PUBLIC_API_URL=http://localhost:8080
+        ports:
+            - '3000:3000'
+        volumes:
+            - ./frontend:/app
+            - /app/node_modules
+        depends_on:
+            - backend
+        networks:
+            - pid-network
 
 networks:
-  pid-network:
-    driver: bridge
+    pid-network:
+        driver: bridge
 
 volumes:
-  mysql_data:
-  localstack_data:
+    mysql_data:
+    localstack_data:
