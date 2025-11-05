@@ -19,6 +19,12 @@
             "app\\": ""
         }
     },
+    "repositories": [
+        {
+            "type": "composer",
+            "url": "https://asset-packagist.org"
+        }
+    ],
     "config": {
         "process-timeout": 1800,
         "allow-plugins": {
